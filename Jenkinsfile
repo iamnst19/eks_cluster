@@ -82,12 +82,13 @@ pipeline {
         }
       }
     }
-	stage('Istio Install')
+	stage('Istio Install') {
 	  steps{
 		  script{
 			  sh " istioctl install -f \"istio-operator.yaml\" --kubeconfig $HOME/.kube/config -y"
 		  }
 	  }
+	}
 
     stage('TF Destroy') {
       when {
