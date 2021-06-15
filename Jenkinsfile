@@ -11,7 +11,10 @@ pipeline {
   }
   
   agent any
-
+  tools {
+        terraform 'terraform-12' 
+		git       'github'  
+    }
   stages {
     stage('checkout') {
         steps {
@@ -26,15 +29,12 @@ pipeline {
 			}
 		}
 	}
-    stage('Set Terraform path') {
+    stage('Checking Terraform') {
         steps {
-            script {
-                def tfHome = tool name: 'terraform'
-                env.PATH = "${tfHome}:${env.PATH}"
-            }
             sh 'terraform -version'
         }
     }
+	
     stage('TF Plan') {
       when {
         expression { params.action == 'create' }
