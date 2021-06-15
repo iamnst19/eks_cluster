@@ -3,7 +3,7 @@
 
 variable "aws_region" {
   description = "The AWS region to create things in."
-  default     = "eu-east-1"
+  default     = "us-east-1"
 }
 
 variable "subnet" {

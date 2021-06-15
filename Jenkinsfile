@@ -7,7 +7,7 @@ pipeline {
     string(name: 'instance_type', defaultValue : 'm5.large', description: "k8s worker node instance type.")
     string(name: 'num_workers', defaultValue : '2', description: "k8s number of worker instances.")
     string(name: 'max_workers', defaultValue : '4', description: "k8s maximum number of worker instances that can be scaled.")
-    string(name: 'region', defaultValue : 'eu-east-1', description: "AWS region.")
+    string(name: 'region', defaultValue : 'us-east-1', description: "AWS region.")
   }
   
   agent any
@@ -44,8 +44,6 @@ pipeline {
 				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS_Credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 				sh """
 					terraform init
-					terraform workspace new ${params.cluster} || true
-					terraform workspace select ${params.cluster}
 					terraform plan \
 						-var cluster-name=${params.cluster} \
 						-out ${plan}
