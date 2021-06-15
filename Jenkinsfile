@@ -41,7 +41,6 @@ pipeline {
 		}	
 		steps {
 			script {
-			dir('cluster') {
 				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS_Credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 				sh """
 					terraform init
@@ -56,14 +55,13 @@ pipeline {
 			}
         }
       }
-    }
+
     stage('TF Apply') {
       when {
         expression { params.action == 'create' }
 		}	
 		steps {
 			script {
-			dir('cluster') {
 				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS_Credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 				if (fileExists('$HOME/.kube')) {
 					echo '.kube Directory Exists'
@@ -78,9 +76,8 @@ pipeline {
 				sleep 60
 				sh 'kubectl get nodes'
 				}
-			}
+             }
         }
-      }
     }
 	stage('Istio Install') {
 	  steps{
@@ -96,17 +93,15 @@ pipeline {
       }
       steps {
         script {
-			dir('cluster') {
 				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS_Credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 				sh """
 				terraform workspace select ${params.cluster}
 				terraform destroy -auto-approve
 				"""
 				}
-			}
+            }
         }
-      }
-    }
+     }
   }
   post {
     success {
