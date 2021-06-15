@@ -4,7 +4,7 @@ resource "null_resource" "kube_config_import" {
   }
 
   depends_on = [
-      aws_eks_cluster.istio-cluster,
+      aws_eks_cluster.demo,
       aws_eks_node_group.demo
   ]
 }

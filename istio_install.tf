@@ -10,7 +10,7 @@ resource "null_resource" "install_istio" {
   }
   depends_on = [  
       time_sleep.wait_90_seconds,
-      aws_eks_cluster.istio-cluster,
+      aws_eks_cluster.demo,
       aws_eks_node_group.demo
   ]
 }

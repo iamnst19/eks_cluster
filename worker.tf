@@ -33,16 +33,16 @@ resource "aws_iam_role_policy_attachment" "demo-node-AmazonEC2ContainerRegistryR
 }
 
 resource "aws_eks_node_group" "demo" {
-  cluster_name    = aws_eks_cluster.istio-cluster.name
+  cluster_name    = aws_eks_cluster.demo.name
   node_group_name = "demo"
   node_role_arn   = aws_iam_role.demo-node.arn
   subnet_ids      = var.subnet
-  disk_size = 20
-  instance_types = [ "m5.large" ]
+  disk_size       = var.inst_disk_size
+  instance_types  = [ var.inst-type ]
   scaling_config {
-    desired_size = 2
-    max_size     = 3
-    min_size     = 1
+    desired_size = var.num-workers
+    max_size     = var.max-workers
+    min_size     = var.num-workers
   }
 
   depends_on = [
