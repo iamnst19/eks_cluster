@@ -80,7 +80,7 @@ pipeline {
 	stage('Istio Install') {
 	  steps{
 		  script{
-			  sh " istioctl install -f \"istio-operator.yaml\" --kubeconfig $HOME/.kube/config -y"
+			  sh " istioctl install -f \"istio-operator.yaml\" --kubeconfig /root/.kube/config -y"
 		  }
 	  }
 	}
