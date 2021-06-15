@@ -68,9 +68,9 @@ pipeline {
 				}
 				sh """
 					terraform apply -input=false -auto-approve ${plan}
-					terraform output kubeconfig > $HOME/.kube/config
+					terraform output kubeconfig > /root/.kube/config
 				"""
-				sh 'sudo chown $(id -u):$(id -g) $HOME/.kube/config'
+				sh 'sudo chown 0:0 /root/.kube/config'
 				sleep 60
 				sh 'kubectl get nodes'
 				}
