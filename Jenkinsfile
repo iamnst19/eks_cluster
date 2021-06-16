@@ -114,7 +114,7 @@ pipeline {
           secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 			
 			sh """ 
-			  istioctl install -f \"istio-operator.yaml\" -y  --kubeconfig /var/lib/jenkins/.kube/config
+			  istioctl install --set profile=demo -y  --kubeconfig /var/lib/jenkins/.kube/config
 			"""
 		  }
 	  }
