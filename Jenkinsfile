@@ -100,24 +100,6 @@ pipeline {
 	  }
 	}
 
-	stage('Istio Install') {
-	  when {
-        expression { params.action == 'create' }
-      }
-	  steps{
-		script{
-		  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
-          credentialsId: 'AWS_Credentials', 
-          accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
-          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-			
-			sh """ 
-			  istioctl install --set profile=demo -y  --kubeconfig /var/lib/jenkins/.kube/config
-			"""
-		  }
-	  }
-	}
-	}
 	stage('label namespace'){
 	  when {
         expression { params.action == 'create' }
@@ -130,14 +112,34 @@ pipeline {
           secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 			
 			sh """ 
+			  kubectl create ns istio-system
 			  kubectl label namespace default istio-system istio-injection=enabled
 			"""
 		  }
 	  }
 	}
 	} 
-	  
 
+	stage('Istio Install') {
+	  when {
+        expression { params.action == 'create' }
+      }
+	  steps{
+		script{
+		  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+          credentialsId: 'AWS_Credentials', 
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+			
+			sh """ 
+			  istioctl install -f \"istio-operator.yaml\" -y  --kubeconfig /var/lib/jenkins/.kube/config
+			"""
+		  }
+	  }
+	}
+	}
+
+	  
 	stage('Install Addons'){
 	  when {
         expression { params.action == 'create' }
