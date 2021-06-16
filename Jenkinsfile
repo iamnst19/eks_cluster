@@ -103,10 +103,11 @@ pipeline {
 	stage('Istio Install') {
 	  steps{
 		  script{
-			  sh " istioctl install -f \"istio-operator.yaml\" --kubeconfig /root/.kube/config -y"
+			  sh " istioctl install -f \"istio-operator.yaml\" --kubeconfig /var/lib/jenkins/.kube/config"
 		  }
 	  }
 	}
+
 
     stage('TF Destroy') {
       when {
