@@ -101,9 +101,14 @@ pipeline {
 	}
 
 	stage('Istio Install') {
+	  when {
+        expression { params.action == 'create' }
+      }
 	  steps{
 		  script{
-			  sh " istioctl install -f \"istio-operator.yaml\" --kubeconfig /var/lib/jenkins/.kube/config"
+			  sh """ 
+			   istioctl install -f \"istio-operator.yaml\" --kubeconfig /var/lib/jenkins/.kube/config
+			"""
 		  }
 	  }
 	}
