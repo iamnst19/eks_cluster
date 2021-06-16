@@ -107,7 +107,7 @@ pipeline {
 	  steps{
 		  script{
 			  sh """ 
-			   istioctl install -f \"istio-operator.yaml\" --kubeconfig /var/lib/jenkins/.kube/config
+			   istioctl install --set profile=demo -y --kubeconfig /var/lib/jenkins/.kube/config
 			"""
 		  }
 	  }
