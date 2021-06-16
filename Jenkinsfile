@@ -107,7 +107,7 @@ pipeline {
 	  steps{
 		  script{
 			  sh """ 
-			  sudo istioctl install --set profile=demo -y --kubeconfig /var/lib/jenkins/.kube/config
+			  istioctl install --set profile=demo -y --logtostderr --kubeconfig /var/lib/jenkins/.kube/config
 			"""
 		  }
 	  }
