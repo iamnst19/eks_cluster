@@ -120,7 +120,8 @@ pipeline {
 	  }
 	}
 	}
-    stage('label namespace'){
+    /*
+	stage('label namespace'){
 	  when {
         expression { params.action == 'create' }
       }
@@ -138,7 +139,7 @@ pipeline {
 	  }
 	}
 	}
-	  
+	*/  
 	stage('Install Addons'){
 	  when {
         expression { params.action == 'create' }
@@ -151,7 +152,8 @@ pipeline {
           secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 			
 			sh """ 
-			  kubectl apply -f prometheus.yaml
+			 # kubectl apply -f prometheus.yaml
+			  kubectl apply -f prom-deploy.yaml
               kubectl apply -f kiali.yaml
               kubectl apply -f kiali.yaml
               kubectl apply -f kiali-gateway.yaml
