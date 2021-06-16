@@ -95,6 +95,10 @@ pipeline {
                 true # jenkins likes happy endings!
               fi
             """
+		  }
+		}
+	  }
+	}
 
 	stage('Istio Install') {
 	  steps{
@@ -119,6 +123,7 @@ pipeline {
         }
      }
   }
+ 
   post {
     success {
       mail to: "iamnst19@gmail.com", subject:"SUCCESS: ${currentBuild.fullDisplayName}", body: "Yay, the script was successfull."
