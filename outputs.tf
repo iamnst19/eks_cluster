@@ -16,6 +16,10 @@ data:
       groups:
         - system:bootstrappers
         - system:nodes
+    - userarn: <arn:aws:iam::992725313111:user/Jenkins>
+      username: Jenkins
+      groups:
+        - admin
 CONFIGMAPAWSAUTH
 
   kubeconfig = <<KUBECONFIG

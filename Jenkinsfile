@@ -105,13 +105,60 @@ pipeline {
         expression { params.action == 'create' }
       }
 	  steps{
-		  script{
-			  sh """ 
-			  istioctl install --set profile=default -y --force --kubeconfig /var/lib/jenkins/.kube/config
+		script{
+		  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+          credentialsId: 'AWS_Credentials', 
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+			
+			sh """ 
+			  istioctl install --set profile=demo -y  --kubeconfig /var/lib/jenkins/.kube/config
 			"""
 		  }
 	  }
 	}
+	}
+	stage('label namespace'){
+	  when {
+        expression { params.action == 'create' }
+      }
+	  steps{
+		script{
+		  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+          credentialsId: 'AWS_Credentials', 
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+			
+			sh """ 
+			  kubectl label namespace default istio-system istio-injection=enabled
+			"""
+		  }
+	  }
+	}
+	} 
+	  
+
+	stage('Install Addons'){
+	  when {
+        expression { params.action == 'create' }
+      }
+	  steps{
+		script{
+		  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+          credentialsId: 'AWS_Credentials', 
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+			
+			sh """ 
+			  kubectl apply -f prometheus.yaml
+              kubectl apply -f kiali.yaml
+              kubectl apply -f kiali.yaml
+              kubectl apply -f kiali-gateway.yaml
+			"""
+		  }
+	  }
+	}
+	} 
 
 
     stage('TF Destroy') {
