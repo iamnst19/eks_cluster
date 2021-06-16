@@ -100,25 +100,7 @@ pipeline {
 	  }
 	}
 
-	stage('label namespace'){
-	  when {
-        expression { params.action == 'create' }
-      }
-	  steps{
-		script{
-		  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
-          credentialsId: 'AWS_Credentials', 
-          accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
-          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-			
-			sh """ 
-			  kubectl create ns istio-system
-			  kubectl label namespace default istio-system istio-injection=enabled
-			"""
-		  }
-	  }
-	}
-	} 
+ 
 
 	stage('Istio Install') {
 	  when {
@@ -138,7 +120,24 @@ pipeline {
 	  }
 	}
 	}
-
+    stage('label namespace'){
+	  when {
+        expression { params.action == 'create' }
+      }
+	  steps{
+		script{
+		  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+          credentialsId: 'AWS_Credentials', 
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+			
+			sh """
+			  kubectl label namespace default istio-injection=enabled
+			"""
+		  }
+	  }
+	}
+	}
 	  
 	stage('Install Addons'){
 	  when {
