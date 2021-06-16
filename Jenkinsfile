@@ -18,7 +18,7 @@ pipeline {
   stages {
     stage('checkout') {
         steps {
-            git 'https://github.com/iamnst19/Istio_EKS_Terraform.git'
+            git 'https://github.com/iamnst19/eks_cluster.git'
         }
     }
 	stage('Setup') {
@@ -60,23 +60,42 @@ pipeline {
 		}	
 		steps {
 			script {
-				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS_Credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-				if (fileExists('$HOME/.kube')) {
-					echo '.kube Directory Exists'
-				} else {
-				sh 'mkdir -p $HOME/.kube'
-				}
+				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+				accessKeyVariable: 'AWS_ACCESS_KEY_ID', 
+				credentialsId: 'AWS_Credentials', 
+				secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+
 				sh """
 					terraform apply -input=false -auto-approve ${plan}
-					terraform output kubeconfig > /root/.kube/config
 				"""
-				sh 'sudo chown 0:0 /root/.kube/config'
-				sleep 60
-				sh 'kubectl get nodes'
 				}
              }
         }
     }
+    
+	stage('Cluster setup') {
+      when {
+        expression { params.action == 'create' }
+      }
+      steps {
+        script {
+          withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+          credentialsId: 'AWS_Credentials', 
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+            
+            sh """
+              aws eks update-kubeconfig --name ${params.cluster} --region ${params.region}
+              # Add configmap aws-auth if its not there:
+              if [ ! "\$(kubectl -n kube-system get cm aws-auth 2> /dev/null)" ]
+              then
+                echo "Adding aws-auth configmap to ns kube-system..."
+                terraform output config_map_aws_auth | awk '!/^\$/' | kubectl apply -f -
+              else
+                true # jenkins likes happy endings!
+              fi
+            """
+
 	stage('Istio Install') {
 	  steps{
 		  script{
@@ -93,7 +112,6 @@ pipeline {
         script {
 				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS_Credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 				sh """
-				terraform workspace select ${params.cluster}
 				terraform destroy -auto-approve
 				"""
 				}
