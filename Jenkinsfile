@@ -118,7 +118,7 @@ pipeline {
 	  }
 	}
 	}
-/*
+
 	stage('Injecting istio proxy'){
 	  when {
         expression { params.action == 'create' }
@@ -138,7 +138,7 @@ pipeline {
 	  }
 	}
 	}
- */
+ 
 	stage('Install Addons'){
 	  when {
         expression { params.action == 'create' }
