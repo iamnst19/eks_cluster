@@ -120,7 +120,7 @@ pipeline {
 	  }
 	}
 	}
-
+/*
 	stage('label namespace'){
 	  when {
         expression { params.action == 'create' }
@@ -139,7 +139,7 @@ pipeline {
 	  }
 	}
 	}
- 
+ */
 	stage('Install Addons'){
 	  when {
         expression { params.action == 'create' }
