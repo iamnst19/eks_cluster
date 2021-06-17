@@ -114,13 +114,13 @@ pipeline {
           secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 			
 			sh """ 
-			  istioctl install --set profile=demo -y  --kubeconfig /var/lib/jenkins/.kube/config
+			  istioctl install --set profile=default -y  --kubeconfig /var/lib/jenkins/.kube/config
 			"""
 		  }
 	  }
 	}
 	}
-    /*
+
 	stage('label namespace'){
 	  when {
         expression { params.action == 'create' }
@@ -139,7 +139,7 @@ pipeline {
 	  }
 	}
 	}
-	*/  
+ 
 	stage('Install Addons'){
 	  when {
         expression { params.action == 'create' }
