@@ -151,6 +151,7 @@ pipeline {
           secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 			
 			sh """ 
+			 chmod +x kiali-deploy.sh
              ./kiali-deploy.sh
               
 			"""
