@@ -100,8 +100,6 @@ pipeline {
 	  }
 	}
 
- 
-
 	stage('Istio Install') {
 	  when {
         expression { params.action == 'create' }
@@ -120,8 +118,8 @@ pipeline {
 	  }
 	}
 	}
-/*
-	stage('label namespace'){
+
+	stage('Injecting istio proxy'){
 	  when {
         expression { params.action == 'create' }
       }
@@ -133,13 +131,14 @@ pipeline {
           secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 			
 			sh """
+			  kubectl label --overwrite ns istio-system istio-injection=enabled
 			  kubectl label namespace default istio-injection=enabled
 			"""
 		  }
 	  }
 	}
 	}
- */
+ 
 	stage('Install Addons'){
 	  when {
         expression { params.action == 'create' }
@@ -152,14 +151,39 @@ pipeline {
           secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
 			
 			sh """ 
-              kubectl apply -f kiali.yaml
-              kubectl apply -f kiali.yaml
-              kubectl apply -f kiali-gateway.yaml
+              n=0
+              until [ "$n" -ge 5 ]
+			  do
+				kubectl apply -f kiali.yaml && break  # kiali deployment failed to apply in the first attemp so I decide to retry
+				n=$((n+1))
+				sleep 15
+			  done
+              
 			"""
 		  }
 	  }
 	}
-	} 
+	}
+
+	stage('Deploying Kiali Virtual Service'){
+	  when {
+        expression { params.action == 'create' }
+      }
+	  steps{
+		script{
+		  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
+          credentialsId: 'AWS_Credentials', 
+          accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
+          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+		  
+			sh """
+				kubectl apply -f kiali-gateway.yaml
+			"""
+		  }
+		}
+	  }
+	}
+		    
 
 
     stage('TF Destroy') {
