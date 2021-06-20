@@ -1,4 +1,3 @@
-#
 # Variables Configuration
 
 variable "aws_region" {
@@ -8,9 +7,11 @@ variable "aws_region" {
 
 variable "subnet" {
   description = "list of subnets"
-  default = []
+  default = [ "subnet-b2d9aaed", "subnet-85b9c5a4" ]
+  type    = list(string)
 }
-variable "cluster-name" {
+
+  variable "cluster-name" {
   description = "eks cluster name"
   default     = "demo"
   type        = string
@@ -44,5 +45,11 @@ variable "inst_disk_size" {
 variable "k8s_version" {
   description = "Kubernetes version."
   default     = "1.19"
+  type        = string
+}
+
+variable "role" {
+  description = "Role that has the access to the EKS cluster"
+  default     = "arn:aws:iam::992725313111:role/eks-admin"
   type        = string
 }
