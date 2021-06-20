@@ -39,3 +39,32 @@ spec:
         host: productpage
         port:
           number: 9080
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: reviews-route
+spec:
+  hosts:
+  - productpage.default.svc.cluster.local
+  http:
+  - name: "reviews-routes"
+    match:
+    - uri:
+        prefix: "/review"
+    route:
+    - destination:
+        host: reviews.default.svc.cluster.local
+        port:
+          number: 9080
+  - name: "details-route"
+    match:
+    - uri:
+        prefix: "/details"
+    route:
+    - destination:
+        host: details.default.svc.cluster.local
+        port:
+          number: 9080
+
