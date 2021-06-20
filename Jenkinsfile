@@ -93,7 +93,7 @@ pipeline {
                 echo "Adding aws-auth configmap to ns kube-system..."
                 terraform output config_map_aws_auth | awk '!/^\$/' | kubectl apply -f -
               else
-                true # coz please dont break!
+                true # coz please dont break this!
               fi
             """
 		  }
