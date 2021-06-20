@@ -87,8 +87,9 @@ pipeline {
             sh """
               aws eks update-kubeconfig --name ${params.cluster} --region ${params.region}
               # Add configmap aws-auth if its not there:
-              if [ ! "\$(kubectl -n kube-system get cm aws-auth 2> /dev/null)" ]
+              if [  "\$(kubectl -n kube-system get cm aws-auth 2> /dev/null)" ]
               then
+	        kubectl -n kube-system delete cm aws-auth
                 echo "Adding aws-auth configmap to ns kube-system..."
                 terraform output config_map_aws_auth | awk '!/^\$/' | kubectl apply -f -
               else
