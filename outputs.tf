@@ -16,7 +16,7 @@ data:
       groups:
         - system:bootstrappers
         - system:nodes
-    - rolearn: var.role
+    - rolearn: ${var.role}
       username: eks-admin
       groups:
         - system:masters
