@@ -239,11 +239,8 @@ pipeline {
   }
  
   post {
-    success {
-      mail to: "iamnst19@gmail.com", subject:"SUCCESS: ${currentBuild.fullDisplayName}", body: "Yay, the script was successfull."
+        always {
+            emailext body: 'Build is Successfull', recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']], subject: 'Build Status'
+        }
     }
-    failure {
-      mail to: "iamnst19gmail.com", subject:"FAILURE: ${currentBuild.fullDisplayName}", body: "Boo, the script failed."
-    }
-  }
 }
